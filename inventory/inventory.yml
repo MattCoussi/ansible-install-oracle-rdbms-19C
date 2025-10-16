@@ -7,7 +7,6 @@ all:
   vars:
     # Information de connexion Ansible
     ansible_connection: ssh
-
     ## ---------------------------------------------------------------
     ## - Compte et groupe utilisateur Oracle / Grid
     oracle_account: 
@@ -15,7 +14,4 @@ all:
      group_install: "oinstall"
      group_dba: "dba"
      home: "/home/oracle"
-
-    
-
 ...

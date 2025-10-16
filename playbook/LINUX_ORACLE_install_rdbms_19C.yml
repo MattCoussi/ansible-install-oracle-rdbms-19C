@@ -1,8 +1,4 @@
----
-###################################################
-## PLAYBOOK POUR INSTALLER UN RDBMS 19C
-
-    
+---  
 - hosts: linuxorainstallrdbms
   gather_facts: no
 
