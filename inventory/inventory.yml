@@ -1,10 +1,6 @@
 ---
-############################################################################
-## INVENTORY DES SERVEURS DE BASES DE DONNES LINUX
-############################################################################
 all:
   children:
-    ## - ERA - Groupe pour le serveur ERA
     linuxorainstallrdbms:
       hosts:
         serv-oracle.mydomain.com:
