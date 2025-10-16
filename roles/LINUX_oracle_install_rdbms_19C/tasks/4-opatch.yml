@@ -1,0 +1,10 @@
+---
+# Décompression de l'OPatch
+- name: "{{ titre_install_rdbms_opatch }} - Décompression version OPatch"
+  unarchive:
+    src: "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}/{{ livrables_oracle_name.opatch }}"
+    dest:  "{{ oracle_home }}"
+    remote_src: yes
+  become_user: "{{ oracle_account.name }}"
+
+...

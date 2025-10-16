@@ -1,0 +1,12 @@
+---
+###################################################
+## PLAYBOOK POUR INSTALLER UN RDBMS 19C
+
+    
+- hosts: linuxorainstallrdbms
+  gather_facts: no
+
+  roles:
+    - LINUX_oracle_install_rdbms_19C
+
+...

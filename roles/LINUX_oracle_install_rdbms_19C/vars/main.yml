@@ -1,0 +1,34 @@
+---
+
+## ---------------------------------------------------------------
+## - Définition des titres
+titre_install_rdbms_verify: "RDBMS INSTALL 19C - VERIFY"
+titre_install_rdbms_livrables: "RDBMS INSTALL 19C - LIVRABLES"
+titre_install_rdbms_prerequis: "RDBMS INSTALL 19C - PREREQUIS"
+titre_install_rdbms_install: "RDBMS INSTALL 19C - INSTALL"
+titre_install_rdbms_opatch: "RDBMS INSTALL 19C - OPATCH"
+titre_install_rdbms_patch: "RDBMS INSTALL 19C - PATCH"
+titre_install_rdbms_purge: "RDBMS INSTALL 19C - PURGE LIVRABLE"
+
+# - Nom du RPM preinstall
+oracle_rpm_preinstall: "oracle-database-preinstall-19c"
+
+# - Nom fichier response installation automatique
+oracle_19C_response_file_name: "oracle_19C_install.rsp"
+# -- Espace nécessaire
+rdbms_19C_space: "10000000"
+
+# -- Localisation des livrables
+livrables_oracle_directory: "TO_CUSTOMISE"
+
+livrables_temp:
+ fs: "/tmp"
+ folder: "oracle-database-19C"
+ space: "5000000"
+
+# -- Information dossier d'installation
+root_directory: "/u02"
+oracle_home: "{{ root_directory }}/app/oracle/product/19.0.0/dbhome_1"
+oracle_base: "{{ root_directory }}/app/oracle"
+
+...

@@ -1,0 +1,8 @@
+---
+# Vérification du succès au non de la création
+- name: "{{ titre_install_rdbms_purge }} - Suppression du dossier des livrables"
+  ansible.builtin.file:
+    path: "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}"
+    state: absent
+
+...

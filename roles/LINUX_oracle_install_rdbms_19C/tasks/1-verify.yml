@@ -1,0 +1,62 @@
+---
+
+# Vérification si un rdbms 19C n'est pas déjà installé
+- name: "{{ titre_install_rdbms_verify }} - Verification présence inventory dans /etc/oraInst.loc"
+  ansible.builtin.shell: "grep inventory_loc /etc/oraInst.loc | wc -l"
+  register: tmp_verif_ora_inventory
+
+- ansible.builtin.fail:
+    msg: ERREUR - La localisation de l'inventory Oracle n'a pas été trouvée.
+  when:  tmp_verif_ora_inventory.stdout|int == 0
+
+# Vérification si un rdbms 19C n'est pas déjà installé
+- name: "{{ titre_install_rdbms_verify }} - Récupération du chemin de l'inventory dans /etc/oraInst.loc"
+  ansible.builtin.shell: "grep inventory_loc /etc/oraInst.loc | awk -F\"=\" '{print $2}'"
+  register: tmp_recup_oracle_inventory_path
+- ansible.builtin.set_fact:
+     tmp_oracle_inventory_path: "{{ tmp_recup_oracle_inventory_path.stdout }}"
+
+# Vérification si un rdbms 19C n'est pas déjà installé
+- name: "{{ titre_install_rdbms_verify }} - Vérification RDBMS 19C pas déja installé"
+  ansible.builtin.shell: "grep 19 {{ tmp_oracle_inventory_path }}/ContentsXML/inventory.xml | grep -v 1999 | wc -l"
+  register: tmp_verif_detect_install_19C
+
+# Vérification espace disponible ORACLE_HOME
+- name: "{{ titre_install_rdbms_verify }} - Vérification espace disponible dans {{ root_directory }}"
+  ansible.builtin.shell: "df -k {{ root_directory }} | tail -1 | awk '{print $4}'"
+  register: tmp_verif_root_directory_space_available
+
+# Vérification espace disponible ORACLE_HTMP_LIVRABLESOME
+- name: "{{ titre_install_rdbms_verify }} - Vérification espace disponible dans {{ livrables_temp.fs }}"
+  ansible.builtin.shell: "df -k {{ livrables_temp.fs }} | tail -1 | awk '{print $4}'"
+  register: tmp_verif_livrables_temp_directory_space_available
+
+# Vérificiation que les livrables sont accessibles
+- name: "{{ titre_install_rdbms_verify }} - Vérificiation que les livrables sont accessibles - database"
+  ansible.builtin.shell: "ls -ld {{ livrables_oracle_directory }}/{{ livrables_oracle_name.database }} 1>/dev/null 2>&1 ; echo $?"
+  register: tmp_verif_livrables_available_database
+
+# Vérificiation que les livrables sont accessibles
+- name: "{{ titre_install_rdbms_verify }} - Vérificiation que les livrables sont accessibles - opatch"
+  ansible.builtin.shell: "ls -ld {{ livrables_oracle_directory }}/{{ livrables_oracle_name.opatch }} 1>/dev/null 2>&1 ; echo $?"
+  register: tmp_verif_livrables_available_opatch
+
+# Vérificiation que les livrables sont accessibles
+- name: "{{ titre_install_rdbms_verify }} - Vérificiation que les livrables sont accessibles - patch"
+  ansible.builtin.shell: "ls -ld {{ livrables_oracle_directory }}/{{ livrables_oracle_name.patch }} 1>/dev/null 2>&1 ; echo $?"
+  register: tmp_verif_livrables_available_patch
+
+# Vérificiation que le RPM preinstall a bien été installé
+- name: "{{ titre_install_rdbms_verify }} - Vérificiation que le RPM preinstall a bien été installé"
+  ansible.builtin.shell: "rpm -qa | grep {{ oracle_rpm_preinstall }} |wc -l"
+  register: tmp_verif_oracle_rpm_preinstall
+
+# Vérification du succès au non de la création
+- name: "{{ titre_install_rdbms_verify }} - Validation que les vérifications sont OK"
+  ansible.builtin.fail:
+    msg: ERREUR - Il y a un problème soit d'espace disponible sur {{ root_directory }}, soit le RDBMS 19C est installé ou les livrables ne sont pas accessibles.
+  when:  (tmp_verif_livrables_temp_directory_space_available.stdout|int < livrables_temp.space|int) or (tmp_verif_root_directory_space_available.stdout|int <  rdbms_19C_space|int) or (tmp_verif_detect_install_19C|int > 0) or (tmp_verif_livrables_available_database.stdout|int > 0) or (tmp_verif_livrables_available_opatch.stdout|int > 0) or (tmp_verif_livrables_available_patch.stdout|int > 0) or (tmp_verif_oracle_rpm_preinstall.stdout|int == 0)
+
+
+
+...

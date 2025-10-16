@@ -1,0 +1,20 @@
+---
+
+# Création du dossier de réception
+- name: "{{ titre_install_rdbms_prerequis }} - Création du dossier d'installation"
+  ansible.builtin.file:
+    path: "{{ oracle_home }}"
+    state: directory
+    owner: "{{ oracle_account.name }}"
+    group: "{{ oracle_account.group_install }}"
+    mode: "0755"
+
+# Décompression du livrable
+- name: "{{ titre_install_rdbms_prerequis }} - Décompression du livrables"
+  unarchive:
+    src: "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}/{{ livrables_oracle_name.database }}"
+    dest:  "{{ oracle_home }}"
+    remote_src: yes
+  become_user: "{{ oracle_account.name }}"
+
+...

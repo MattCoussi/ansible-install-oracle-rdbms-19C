@@ -1,0 +1,25 @@
+---
+############################################################################
+## INVENTORY DES SERVEURS DE BASES DE DONNES LINUX
+############################################################################
+all:
+  children:
+    ## - ERA - Groupe pour le serveur ERA
+    linuxorainstallrdbms:
+      hosts:
+        serv-oracle.mydomain.com:
+  vars:
+    # Information de connexion Ansible
+    ansible_connection: ssh
+
+    ## ---------------------------------------------------------------
+    ## - Compte et groupe utilisateur Oracle / Grid
+    oracle_account: 
+     name: "oracle"
+     group_install: "oinstall"
+     group_dba: "dba"
+     home: "/home/oracle"
+
+    
+
+...

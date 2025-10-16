@@ -1,0 +1,18 @@
+---
+# Prérequis
+- ansible.builtin.import_tasks: "tasks/1-verify.yml"
+# traitement livrable
+- ansible.builtin.import_tasks: "tasks/2-livrables.yml"
+# prérequis
+- ansible.builtin.import_tasks: "tasks/3-prerequis.yml"
+# décompression OPatch
+- ansible.builtin.import_tasks: "tasks/4-opatch.yml"
+  when: "custom_oracle_database_apply_patch == 'true'"
+# installation patch
+- ansible.builtin.import_tasks: "tasks/5-patch.yml"
+  when: "custom_oracle_database_apply_patch == 'true'"
+# installation RDBMS
+- ansible.builtin.import_tasks: "tasks/6-install.yml"
+# purge des livrables
+- ansible.builtin.import_tasks: "tasks/7-purge.yml"
+...

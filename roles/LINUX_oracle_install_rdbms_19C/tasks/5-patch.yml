@@ -1,0 +1,48 @@
+---
+
+# Création du dossier de réception
+- name: "{{ titre_install_rdbms_patch }} - Création du dossier temporaire pour le ComboPatch"
+  ansible.builtin.file:
+    path: "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}/tmp"
+    state: directory
+    owner: "{{ oracle_account.name }}"
+    group: "{{ oracle_account.group_install }}"
+    mode: "0755"
+
+# Décompression du livrable
+- name: "{{ titre_install_rdbms_patch }} - Décompression du ComboPatch"
+  unarchive:
+    src: "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}/{{ livrables_oracle_name.patch }}"
+    dest:  "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}/tmp"
+    remote_src: yes
+  become_user: "{{ oracle_account.name }}"
+
+# Récupération du chemin du patch
+- name: "{{ titre_install_rdbms_patch }} - Récupération du nom du dossier du ComboPatch"
+  find:
+    paths: "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}/tmp"
+    file_type: "directory"
+  register: tmp_get_directory_combopatch_name
+- name: "{{ titre_install_rdbms_patch }} - Valorisation variable chemin patch"
+  ansible.builtin.set_fact:
+    tmp_oracle_patch_path: "{{ tmp_get_directory_combopatch_name.files[0].path }}"
+
+# Récupération du chemin du patch
+- name: "{{ titre_install_rdbms_patch }} - Récupération du nom des dossiers patchs du ComboPatch"
+  find:
+    paths: "{{ tmp_oracle_patch_path }}"
+    file_type: "directory"
+  register: tmp_get_directory_patch_name
+
+
+# Installation des patchs dans la db_home
+- name: "{{ titre_install_rdbms_patch }} - Installation du patch {{ item.path }}"
+  become: yes
+  become_user: "{{ oracle_account.name }}"
+  ansible.builtin.shell: "{{ oracle_home }}/runInstaller  -applyRU {{ item.path }}"
+  ignore_errors: True
+  with_items: "{{ tmp_get_directory_patch_name.files }}"
+  register: tmp_oracle_patch_result
+  failed_when: "'Le patch a été appliqué.' not in tmp_oracle_patch_result.stdout_lines"
+
+...

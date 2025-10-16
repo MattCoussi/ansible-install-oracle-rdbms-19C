@@ -1,0 +1,55 @@
+---
+
+# Création du dossier de réception
+- name: "{{ titre_install_rdbms_livrables }} - Création du dossier de réception des livrables"
+  ansible.builtin.file:
+    path: "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}"
+    state: directory
+    owner: "{{ oracle_account.name }}"
+    group: "{{ oracle_account.group_install }}"
+    mode: "0755"
+
+
+# Copie du livrable database
+- name: "{{ titre_install_rdbms_livrables }} - Copie du livrable Oracle database 19C"
+  copy:
+    src: "{{ livrables_oracle_directory }}/{{ livrables_oracle_name.database }}"
+    remote_src: true
+    dest: "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}"
+    owner: "{{ oracle_account.name }}"
+    group: "{{ oracle_account.group_install }}"
+    mode: "0755"
+  become_user: "{{ oracle_account.name }}"
+
+# Copie du livrable opatch
+- name: "{{ titre_install_rdbms_livrables }} - Copie du livrable Oracle 19C OPatch"
+  copy:
+    src: "{{ livrables_oracle_directory }}/{{ livrables_oracle_name.opatch }}"
+    remote_src: true
+    dest: "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}"
+    owner: "{{ oracle_account.name }}"
+    group: "{{ oracle_account.group_install }}"
+    mode: "0755"
+  become_user: "{{ oracle_account.name }}"
+
+# Copie du livrable patch
+- name: "{{ titre_install_rdbms_livrables }} - Copie du livrable Oracle 19C patch"
+  copy:
+    src: "{{ livrables_oracle_directory }}/{{ livrables_oracle_name.patch }}"
+    remote_src: true
+    dest: "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}"
+    owner: "{{ oracle_account.name }}"
+    group: "{{ oracle_account.group_install }}"
+    mode: "0755"
+  become_user: "{{ oracle_account.name }}"
+
+# Copie du fichier response pour l'installation
+- name: "{{ titre_install_rdbms_livrables }} - Copie du fichier response pour l'installation"
+  ansible.builtin.template:
+   src: "templates/oracle_19C_install.j2"
+   dest: "{{ livrables_temp.fs }}/{{ livrables_temp.folder }}/{{ oracle_19C_response_file_name }}"
+   owner: "{{ oracle_account.name }}"
+   group: "{{ oracle_account.group_install }}"
+   mode: 0644
+
+...

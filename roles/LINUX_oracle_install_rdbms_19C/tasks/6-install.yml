@@ -1,0 +1,38 @@
+---
+# Installation du kernel Oracle Database 19C
+- name: "{{ titre_install_rdbms_install }} - Installation Oracle database 19C"
+  become: yes
+  become_user: "{{ oracle_account.name }}"
+  ansible.builtin.shell: "{{ oracle_home }}/runInstaller -silent -responseFile {{ livrables_temp.fs }}/{{ livrables_temp.folder }}/{{ oracle_19C_response_file_name }} -noconfig -ignorePrereqFailure"
+  ignore_errors: True
+  register: tmp_oracle_install_result
+  failed_when: "'Successfully Setup Software with warning(s).' not in tmp_oracle_install_result.stdout_lines"
+
+# Execution du script orainstRoot.sh
+- name: "{{ titre_install_rdbms_install }} - Vérification présence du script post-installation orainstRoot.sh"
+  stat:
+   path: "{{ tmp_oracle_inventory_path }}/orainstRoot.sh"
+  register: tmp_result_exists
+- name: "{{ titre_install_rdbms_install }} - Execution du script orainstRoot.sh"
+  ansible.builtin.shell: "{{ tmp_oracle_inventory_path }}/orainstRoot.sh" 
+  become_user: "root"
+  ignore_errors: True
+  when: tmp_result_exists.stat.exists
+
+# Execution du script root.sh
+- name: "{{ titre_install_rdbms_install }} - Vérification présence du script post-installation root.sh"
+  stat:
+   path: "{{ oracle_home }}/root.sh"
+  register: tmp_result_exists
+- name: "{{ titre_install_rdbms_install }} - Execution du script root.sh"
+  become_user: "root"
+  ansible.builtin.shell: "{{ oracle_home }}/root.sh -silent"
+  when: tmp_result_exists.stat.exists
+
+# Récupération de la version oracle database installée
+- name: "{{ titre_install_rdbms_install }} - Récupération de la version installée"
+  ansible.builtin.shell: "{{ oracle_home }}/OPatch/opatch lsinventory | grep 'Database Release Update'"
+  become_user: "{{ oracle_account.name }}"
+  register: tmp_version_oracle_database_nopatch
+
+...
