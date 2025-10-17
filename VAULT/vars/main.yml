@@ -1,0 +1,15 @@
+---
+## ---------------------------------------------------------------
+## - Définition des titres
+titre_vault_prerequis: "VAULT PREREQUIS"
+titre_vault_update: "VAULT UPDATE"
+titre_vault_get: "VAULT GET"
+titre_vault_generate: "VAULT GENERATE PASSWORD"
+
+# Formattage du fichier json vers l'appel curl
+vault_maj_credential: "{{ lookup('template', 'templates/vault_maj_credential.j2') }}"
+vault_generate_password: "{{ lookup('template', 'templates/vault_generate_password.j2') }}"
+
+
+...
+

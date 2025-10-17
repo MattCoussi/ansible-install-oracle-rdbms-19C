@@ -1,0 +1,36 @@
+---
+
+
+# VAULT - Recuperation des credentials
+- name: "{{ titre_vault_update }} - Récupération du contenu du secret"
+  ansible.builtin.uri:
+   url: "{{ vault_info.url }}/{{ vault_info.version }}/{{ tmp_vault_path }}"
+   method: GET
+   return_content: yes
+   status_code: [200,204,404]
+   validate_certs: false
+   headers:
+     X-Vault-Token: "{{ tmp_vault_token }}"
+  register: tmp_vault_content
+  no_log: "{{ ansible_no_log }}"
+  delegate_to: localhost
+  become: false
+
+# VAULT - ajout des credentials
+- name: "{{ titre_vault_update }} - Ajout de credential dans VAULT"
+  ansible.builtin.uri:
+   url: "{{ vault_info.url }}/{{ vault_info.version }}/{{ tmp_vault_path }}"
+   method: POST
+   return_content: yes
+   status_code: 200
+   validate_certs: false
+   headers:
+     X-Vault-Token: "{{ tmp_vault_token }}"
+   body: "{{ vault_maj_credential }}"
+   body_format: json  
+  no_log: "{{ ansible_no_log }}"
+  delegate_to: localhost
+  become: false
+
+
+...

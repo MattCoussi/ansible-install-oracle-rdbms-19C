@@ -1,0 +1,20 @@
+---
+# Prérequis
+- block:
+  - ansible.builtin.import_tasks: "tasks/1-prerequis.yml"
+  run_once: true
+  when: "tmp_vault_method == 'LIST' or tmp_vault_method == 'UPDATE' or tmp_vault_method == 'GENERATE' or tmp_vault_method == 'TOKEN'"
+  
+# Récupération de credentials
+- block:
+  - ansible.builtin.import_tasks: "tasks/2-get-vault.yml"
+  when: "tmp_vault_method == 'LIST'"
+# Ajout/MAJ de credential dans VAULT
+- block:
+  - ansible.builtin.import_tasks: "tasks/3-add-update-vault.yml"
+  when: "tmp_vault_method == 'UPDATE'"
+# Génération mot de passe
+- block:
+  - ansible.builtin.import_tasks: "tasks/4-generate_password.yml"
+  when: "tmp_vault_method == 'GENERATE'"
+...

@@ -1,0 +1,35 @@
+---
+
+
+# VAULT - Recuperation des credentials
+- name: "{{ titre_vault_get }} - Récupération du contenu du secret."
+  ansible.builtin.uri:
+   url: "{{ vault_info.url }}/{{ vault_info.version }}/{{ tmp_vault_path }}"
+   method: GET
+   return_content: yes
+   status_code: [200,204,404]
+   validate_certs: false
+   headers:
+     X-Vault-Token: "{{ tmp_vault_token }}"
+  register: tmp_vault_content
+  no_log: "{{ ansible_no_log }}"
+  delegate_to: localhost
+  become: false
+
+
+# On formatte la variable de sortie/retour pour envoyer les secrets
+- name: "{{ titre_vault_get }} - Formattage de la variable de retour des credentials pour le compte {{ tmp_vault_user }}."
+  ansible.builtin.set_fact:
+    tmp_vault_credential: "{{ tmp_vault_content.json.data.data[tmp_vault_user] }}"
+  when: tmp_vault_content.json.data.data[tmp_vault_user] is defined
+  no_log: "{{ ansible_no_log }}"
+- ansible.builtin.set_fact:
+    tmp_vault_credential: "NO_CREDENTIAL"
+  when: tmp_vault_content.json.data.data[tmp_vault_user] is undefined
+  no_log: "{{ ansible_no_log }}"
+
+
+
+
+
+...

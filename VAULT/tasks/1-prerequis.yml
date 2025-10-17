@@ -1,0 +1,59 @@
+---
+  
+# Récupération de la date courante dans un shell
+- name:  "{{ titre_vault_prerequis }} - Récupération de la date courante au travers d'un shell."
+  ansible.builtin.shell: "echo $(date +%Y-%m-%d\" \"%H:%M:%S)"
+  register: tmp_vault_current_date
+  become: false
+  delegate_to: localhost
+
+# On recupérer la date actuelle pour valider que le jeton n'est pas expiré
+- name: "{{ titre_vault_prerequis }} - Formattage de la variable pour la date courante."
+  ansible.builtin.set_fact: 
+   tmp_vault_current_date: "{{ tmp_vault_current_date.stdout  }}"
+- name: "{{ titre_vault_prerequis }} - Formattage de la variable pour la date courante en TimeStamp."
+  ansible.builtin.set_fact: 
+   tmp_vault_current_date: "{{ (tmp_vault_current_date|to_datetime).strftime('%s') }}"
+
+# On crée la variable si elle n'existe pas avec une date inférieur à la current pour forcer la récupération du jeton
+- name: "{{ titre_vault_prerequis }} - Création la variable si elle n'existe pas avec une date inférieur à la current pour forcer la récupération du jeton."
+  ansible.builtin.set_fact: 
+   tmp_vault_expiration_date: "{{ tmp_vault_current_date|int - 10 }}"
+  when: tmp_vault_expiration_date is not defined
+
+# VAULT - récupération du token
+- name: "{{ titre_vault_prerequis }} - Interrogation API vault pour récupération token."
+  ansible.builtin.uri:
+   url: "{{ vault_info.url }}/{{ vault_info.version }}/auth/ldap/login/{{ tmp_admin_vault_user }}"
+   method: POST
+   return_content: yes
+   status_code: 200
+   validate_certs: false
+   body: { "password": "{{ tmp_admin_vault_password }}" }
+   body_format: json
+  register: tmp_vault_token_result
+  when:  (tmp_vault_current_date|int > tmp_vault_expiration_date|int)
+  no_log: "{{ ansible_no_log }}"
+  become: false
+  delegate_to: localhost
+
+# Formattage du jeton
+- name: "{{ titre_vault_prerequis }} - Formattage du token pour ajout dans variable."
+  ansible.builtin.set_fact: 
+   tmp_vault_token: "{{ tmp_vault_token_result.json.auth.client_token }}"
+  when:  (tmp_vault_current_date|int > tmp_vault_expiration_date|int)
+  no_log: "{{ ansible_no_log }}"
+
+# Récupération du délai d'expiration du jeton
+- name: "{{ titre_vault_prerequis }} - Récupération du délai d'expiration du jeton."
+  ansible.builtin.set_fact: 
+   tmp_vault_lease_expiration: "{{ tmp_vault_token_result.json.auth.lease_duration }}"
+  when:  (tmp_vault_current_date|int > tmp_vault_expiration_date|int)
+
+# Création de la date pour l'expiration du jeton
+- name: "{{ titre_vault_prerequis }} - Création de la date d'expiration du jeton."
+  ansible.builtin.set_fact: 
+   tmp_vault_expiration_date: "{{ tmp_vault_current_date|int +  tmp_vault_lease_expiration|int }}"
+  when:  (tmp_vault_current_date|int > tmp_vault_expiration_date|int)
+
+...
