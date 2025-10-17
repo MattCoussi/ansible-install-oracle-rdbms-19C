@@ -3,7 +3,14 @@
 ## ROLE DEFINITION
 This role give the power to work with Hashicorp Vault API to get or update/create secret in Vault.
 
-The first step of this role is to get a Vault Token with Username/Password. After getting a valid Token, the role is able to GET/UPDATE/ADD secret in Vault
+The first step of this role is to get a Vault Token with Username/Password. After getting a valid Token, the role is able to GET/UPDATE/ADD secret in Vault.
+
+## DESCRIPTION OF VARIABLES INPUT
+- tmp_vault_path: Path where is the secret
+- tmp_vault_user: User to get/update in VAULT
+- tmp_vault_password: Secret to add in Vault
+- tmp_vault_method: Methods for the Vault role (3 values availables LIST, UPDATE,GENERATE)
+
 
 ### Examples
 
