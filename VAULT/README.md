@@ -12,9 +12,9 @@ The first step of this role is to get a Vault Token with Username/Password. Afte
 - tmp_vault_method: Methods for the Vault role (3 values availables LIST, UPDATE,GENERATE)
 
 
-### Examples
+## Examples
 
-#### Generate a password with Vault API
+### Generate a password with Vault API
 ```
 - name: "Generate password for a user by Vault API and a Policy"
   ansible.builtin.include_role:
@@ -25,7 +25,7 @@ The first step of this role is to get a Vault Token with Username/Password. Afte
   no_log: "{{ ansible_no_log }}"
 ```
 
-#### Add a secret in Vault by API
+### Add a secret in Vault by API
 ```
 - name: "Add or Update a secret in Vault by API"
   ansible.builtin.include_role:
@@ -37,7 +37,7 @@ The first step of this role is to get a Vault Token with Username/Password. Afte
     tmp_vault_method: "UPDATE"
   no_log: "{{ ansible_no_log }}"
 ```
-#### Get a secret in Vault by API
+### Get a secret in Vault by API
 ```
 - name: "Get Secret in Vault by API"
   ansible.builtin.include_role:
