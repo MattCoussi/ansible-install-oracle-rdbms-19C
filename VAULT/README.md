@@ -12,7 +12,7 @@ The first step of this role is to get a Vault Token with Username/Password. Afte
 - tmp_vault_method: Methods for the Vault role (3 values availables LIST, UPDATE,GENERATE)
 
 
-## Examples
+## HOW TO USE
 
 ### Generate a password with Vault API
 ```
