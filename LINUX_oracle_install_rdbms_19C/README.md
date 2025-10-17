@@ -1,4 +1,4 @@
-# ORACLE / ANSIBLE - Role LINUX_oracle_install_rdbms_19C
+# ANSIBLE / ORACLE - Role LINUX_oracle_install_rdbms_19C
 
 ## ROLE DEFINITION
 This Ansible role deploy / patch with Combo Patch and Install Oracle RDBMS 19C on a Linux Server.
